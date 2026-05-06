@@ -63,7 +63,8 @@
     <div id="form-section">
       <p style="font-size:11px;color:var(--txt2);margin-bottom:8px">Fields marked <span class="req">*</span> are required</p>
 
-            <div class="grid">
+      <div class="section"><i class="ti ti-user"></i> Personal Details</div>
+      <div class="grid">
         <div class="row">
           <label>First Name <span class="req">*</span></label>
           <input type="text" id="f-first" placeholder="John" autocomplete="given-name" />
@@ -77,14 +78,14 @@
         <div class="row">
           <label>Gender</label>
           <div class="gender-btns">
-            <div class="gbtn" id="btn-m" onclick="setGender('Male')">Male</div>
-            <div class="gbtn" id="btn-f" onclick="setGender('Female')">Female</div>
+            <div class="gbtn" id="btn-m" onclick="setGender('Male')">♂ Male</div>
+            <div class="gbtn" id="btn-f" onclick="setGender('Female')">♀ Female</div>
           </div>
           <input type="hidden" id="f-gender" />
         </div>
         <div class="row">
           <label>Marital Status</label>
-          <select id="f-status" onchange="toggleSpouse(this.value)">
+          <select id="f-status">
             <option value="">Select...</option>
             <option value="Single">Single</option>
             <option value="Married">Married</option>
@@ -101,35 +102,13 @@
           </select>
         </div>
         <div class="row">
-          <label>Occupation</label>
-          <input type="text" id="f-occupation" placeholder="e.g. Engineer, Teacher..." />
-        </div>
-        <div class="row">
           <label>Date of Birth</label>
           <input type="date" id="f-birthdate" max="2025-12-31" oninput="showAge()" />
           <div class="age-badge" id="age-badge"></div>
         </div>
       </div>
 
-            <!-- SPOUSE SECTION -->
-      <div id="spouse-section" style="display:none;margin-bottom:4px">
-        <div class="grid">
-          <div class="row">
-            <label>Spouse Full Name</label>
-            <input type="text" id="f-spouse-name" placeholder="First & Last Name" />
-          </div>
-          <div class="row">
-            <label>Spouse Date of Birth</label>
-            <input type="date" id="f-spouse-dob" oninput="showSpouseAge()" />
-            <div class="age-badge" id="spouse-age-badge"></div>
-          </div>
-          <div class="row span2">
-            <label>Spouse Occupation</label>
-            <input type="text" id="f-spouse-occupation" placeholder="e.g. Nurse, Accountant..." />
-          </div>
-        </div>
-      </div>
-
+      <div class="section"><i class="ti ti-users"></i> Children</div>
       <div class="grid">
         <div class="span2">
           <label style="font-size:12px;color:var(--txt2);font-weight:500;display:block;margin-bottom:6px">Do you have children?</label>
@@ -144,14 +123,15 @@
         </div>
       </div>
 
-            <div class="grid">
+      <div class="section"><i class="ti ti-mail"></i> Contact Details</div>
+      <div class="grid">
         <div class="row span2">
           <label>Email Address <span class="req">*</span></label>
           <input type="email" id="f-email" placeholder="john@example.com" autocomplete="email" />
           <span class="err" id="e-email">Invalid email</span>
         </div>
         <div class="row">
-          <label>Immigration Status</label>
+          <label>Visa / Immigration Status</label>
           <select id="f-visa">
             <option value="">Select...</option>
             <option value="Citizen">Citizen</option>
@@ -163,7 +143,8 @@
         </div>
       </div>
 
-            <div class="grid">
+      <div class="section"><i class="ti ti-map-pin"></i> Address (Australia)</div>
+      <div class="grid">
         <div class="row span2">
           <label>Full Street Address</label>
           <div class="addr-wrap">
@@ -173,7 +154,7 @@
           <span class="hint"><i class="ti ti-info-circle" style="font-size:11px"></i> Type and select from suggestions — suburb, state & postcode will auto-fill</span>
         </div>
         <div class="row span2">
-          <label>Town</label>
+          <label>Suburb / City</label>
           <input type="text" id="f-city" placeholder="e.g. Bondi, Carlton..." />
         </div>
         <div class="row">
@@ -219,24 +200,6 @@
 let selGender = '';
 let kidsOn = null;
 let kidCount = 0;
-
-function toggleSpouse(val) {
-  const sec = document.getElementById('spouse-section');
-  sec.style.display = (val === 'Married') ? 'block' : 'none';
-  if (val !== 'Married') {
-    ['f-spouse-name','f-spouse-dob','f-spouse-occupation'].forEach(id => {
-      const el = document.getElementById(id); if(el) el.value = '';
-    });
-    document.getElementById('spouse-age-badge').style.display = 'none';
-  }
-}
-
-function showSpouseAge() {
-  const d = document.getElementById('f-spouse-dob').value;
-  const badge = document.getElementById('spouse-age-badge');
-  if (d) { badge.textContent = calcAge(d) + ' years old'; badge.style.display = 'block'; }
-  else badge.style.display = 'none';
-}
 
 function setGender(g) {
   selGender = g;
@@ -333,11 +296,6 @@ async function submitForm() {
     city:       document.getElementById('f-city').value.trim(),
     state:      document.getElementById('f-state').value,
     postcode:   document.getElementById('f-postcode').value.trim(),
-    occupation:     document.getElementById('f-occupation').value.trim(),
-    spouseName:     document.getElementById('f-spouse-name')?.value.trim() || '',
-    spouseDob:      document.getElementById('f-spouse-dob')?.value || '',
-    spouseAge:      calcAge(document.getElementById('f-spouse-dob')?.value || ''),
-    spouseOccupation: document.getElementById('f-spouse-occupation')?.value.trim() || '',
     hasChildren: kidsOn === 'yes',
     children:   kids,
   };
@@ -362,10 +320,6 @@ function resetForm() {
   selGender=''; kidsOn=null; kidCount=0;
   ['btn-m','btn-f','btn-cy','btn-cn'].forEach(id => document.getElementById(id)?.classList.remove('active'));
   document.getElementById('age-badge').style.display='none';
-  document.getElementById('spouse-section').style.display='none';
-  ['f-spouse-name','f-spouse-dob','f-spouse-occupation'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('spouse-age-badge').style.display='none';
-  document.getElementById('f-occupation').value='';
   document.getElementById('kids-section').style.display='none';
   document.getElementById('kids-list').innerHTML='';
   document.getElementById('form-error').style.display='none';
