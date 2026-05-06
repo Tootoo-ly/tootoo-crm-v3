@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tootoo CRM</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.4.0/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- LOGIN -->
+  <div id="screen-login" class="screen active">
+    <div class="auth-wrap">
+      <div class="logo-block">
+        <div class="logo-icon"><i class="ti ti-users-group"></i></div>
+        <h1>Tootoo</h1>
+        <p>מערכת קשרי קהילה</p>
+      </div>
+      <div class="card">
+        <div class="form-row">
+          <label>כתובת מייל</label>
+          <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" />
+        </div>
+        <div class="form-row" style="margin-bottom:16px">
+          <label>סיסמה</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <div id="login-error" class="alert alert-error" style="display:none"></div>
+        <button class="btn btn-primary full-w" id="login-btn" onclick="doLogin()">
+          <i class="ti ti-login"></i> כניסה
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="screen-main" class="screen">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-logo">
+        <div class="logo-sm"><i class="ti ti-users-group"></i></div>
+        <span>Tootoo CRM</span>
+      </div>
+      <div class="header-right">
+        <span id="hdr-email" style="font-size:12px"></span>
+        <div class="avatar" id="hdr-av">מנ</div>
+        <button class="btn btn-sm" onclick="doLogout()"><i class="ti ti-logout"></i> יציאה</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="tab('dashboard')"><i class="ti ti-layout-dashboard"></i> לוח בקרה</div>
+      <div class="nav-tab" onclick="tab('contacts')"><i class="ti ti-users"></i> אנשי קשר <span class="count" id="count-badge">0</span></div>
+      <div class="nav-tab" onclick="tab('form-tab')"><i class="ti ti-forms"></i> טופס ציבורי</div>
+      <div class="nav-tab" onclick="tab('settings')"><i class="ti ti-settings"></i> הגדרות</div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="stats">
+        <div class="stat"><div class="lbl">סה"כ אנשי קשר</div><div class="val" id="st-total">0</div></div>
+        <div class="stat"><div class="lbl">ויזה תקפה</div><div class="val green" id="st-visa-ok">0</div></div>
+        <div class="stat"><div class="lbl">ויזה פגת תוקף</div><div class="val red" id="st-visa-exp">0</div></div>
+        <div class="stat"><div class="lbl">נוספו השבוע</div><div class="val blue" id="st-week">0</div></div>
+      </div>
+      <div class="card">
+        <p class="card-title"><i class="ti ti-chart-bar"></i> התפלגות ויזה</p>
+        <div id="visa-chart"></div>
+      </div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div id="tab-contacts" class="tab-content">
+      <div class="actions">
+        <button class="btn btn-primary" onclick="openModal()"><i class="ti ti-user-plus"></i> הוסף איש קשר</button>
+        <button class="btn btn-success" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i> ייצא PDF</button>
+        <span id="filter-info" style="font-size:13px;color:var(--txt2);margin-right:auto"></span>
+      </div>
+      <div class="filters">
+        <input placeholder="שם פרטי..." id="f-first" oninput="filter()" />
+        <input placeholder="שם משפחה..." id="f-last" oninput="filter()" />
+        <select id="f-gender" onchange="filter()"><option value="">כל המינים</option><option>זכר</option><option>נקבה</option></select>
+        <select id="f-status" onchange="filter()"><option value="">כל הסטטוסים</option><option>רווק/ה</option><option>נשוי/אה</option><option>גרוש/ה</option><option>אלמן/ה</option></select>
+        <select id="f-religion" onchange="filter()"><option value="">כל הדתות</option><option>יהודי</option><option>לא יהודי</option></select>
+        <select id="f-visa" onchange="filter()"><option value="">כל הויזות</option><option>אזרח</option><option>תושב קבע</option><option>Citizen</option><option>Permanent Resident</option><option>Tourist Visa</option><option>Work Visa</option><option>Student Visa</option></select>
+        <input placeholder="עיר/Suburb..." id="f-city" oninput="filter()" />
+        <input type="number" placeholder="גיל מינ..." id="f-age-min" oninput="filter()" style="max-width:100px" />
+        <input type="number" placeholder="גיל מקס..." id="f-age-max" oninput="filter()" style="max-width:100px" />
+        <button class="btn btn-sm" onclick="clearFilter()"><i class="ti ti-x"></i> נקה</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortBy('firstName')">שם פרטי <i class="ti ti-arrows-sort" style="font-size:10px"></i></th>
+              <th onclick="sortBy('lastName')">שם משפחה <i class="ti ti-arrows-sort" style="font-size:10px"></i></th>
+              <th>מין</th><th>סטטוס</th><th>דת</th>
+              <th>מייל</th><th>כתובת</th><th>עיר</th>
+              <th onclick="sortBy('birthdate')">תאריך לידה <i class="ti ti-arrows-sort" style="font-size:10px"></i></th>
+              <th onclick="sortBy('age')">גיל <i class="ti ti-arrows-sort" style="font-size:10px"></i></th>
+              <th>ויזה</th><th>ילדים</th><th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="contacts-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- FORM TAB -->
+    <div id="tab-form-tab" class="tab-content">
+      <div style="max-width:500px">
+        <div class="alert alert-info">
+          <i class="ti ti-link"></i> שתף את הטופס הציבורי עם הקהילה
+        </div>
+        <div class="card" style="margin-top:12px">
+          <p class="card-title">קישור לטופס</p>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="form-link" readonly style="direction:ltr;font-size:12px" />
+            <button class="btn btn-sm" onclick="copyLink()"><i class="ti ti-copy"></i> העתק</button>
+          </div>
+          <p style="font-size:12px;color:var(--txt2);margin-top:8px">הטופס באנגלית עם כתובת אוסטרליה ו-Google Maps</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="tab-settings" class="tab-content">
+      <div class="two-col">
+        <div class="card">
+          <p class="card-title"><i class="ti ti-database"></i> אחסון נתונים</p>
+          <div class="alert alert-success"><i class="ti ti-check"></i> הדאטה שמור ב-Redis (Vercel) — בענן</div>
+          <p style="font-size:13px;color:var(--txt2);margin-top:8px">הדאטה לא מושפע מעדכוני האתר</p>
+        </div>
+        <div class="card">
+          <p class="card-title"><i class="ti ti-database-export"></i> ייצוא</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i> ייצא PDF</button>
+            <button class="btn" onclick="exportJSON()"><i class="ti ti-file-code"></i> ייצא JSON</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">הוסף איש קשר</h3>
+        <span class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></span>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label>שם פרטי *</label><input id="m-first" /></div>
+        <div class="form-row"><label>שם משפחה *</label><input id="m-last" /></div>
+        <div class="form-row"><label>מין</label>
+          <select id="m-gender"><option value="">בחר</option><option>זכר</option><option>נקבה</option></select></div>
+        <div class="form-row"><label>סטטוס</label>
+          <select id="m-status"><option value="">בחר</option><option>רווק/ה</option><option>נשוי/אה</option><option>גרוש/ה</option><option>אלמן/ה</option></select></div>
+        <div class="form-row"><label>דת</label>
+          <select id="m-religion"><option value="">בחר</option><option>יהודי</option><option>לא יהודי</option></select></div>
+        <div class="form-row">
+          <label>תאריך לידה</label>
+          <input type="date" id="m-birthdate" oninput="calcAge()" />
+          <input type="number" id="m-age" placeholder="גיל" readonly style="margin-top:4px;background:var(--bg2)" />
+        </div>
+        <div class="form-row span2"><label>מייל</label><input type="email" id="m-email" /></div>
+        <div class="form-row span2"><label>כתובת</label><input id="m-address" /></div>
+        <div class="form-row"><label>עיר / Suburb</label><input id="m-city" /></div>
+        <div class="form-row"><label>ויזה</label>
+          <select id="m-visa"><option value="">בחר</option><option>אזרח</option><option>תושב קבע</option><option>Citizen</option><option>Permanent Resident</option><option>Tourist Visa</option><option>Work Visa</option><option>Student Visa</option></select></div>
+        <div class="form-row span2">
+          <label>ילדים</label>
+          <div id="children-wrap" style="display:flex;flex-direction:column;gap:6px"></div>
+          <button type="button" class="btn btn-sm" style="margin-top:6px;width:fit-content" onclick="addChildRow()"><i class="ti ti-plus"></i> הוסף ילד</button>
+        </div>
+      </div>
+      <div id="modal-error" class="alert alert-error" style="display:none;margin-top:8px"></div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+        <button class="btn" onclick="closeModal()">ביטול</button>
+        <button class="btn btn-primary" onclick="saveContact()"><i class="ti ti-check"></i> שמור</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal" style="max-width:360px;text-align:center">
+      <i class="ti ti-alert-triangle" style="font-size:40px;color:var(--red)"></i>
+      <h3 style="margin:12px 0 8px" id="confirm-title">אישור</h3>
+      <p style="font-size:13px;color:var(--txt2);margin-bottom:16px" id="confirm-msg"></p>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn" onclick="closeConfirm()">ביטול</button>
+        <button class="btn btn-danger" id="confirm-ok">אשר</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

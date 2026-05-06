@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community Registration - Tootoo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.4.0/dist/tabler-icons.min.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#fff;--bg2:#f5f5f3;--bg3:#eeede9;--txt:#1a1a18;--txt2:#6b6a66;--txt3:#9b9a97;--border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.20);--blue:#185FA5;--blue-bg:#E6F1FB;--blue-txt:#0C447C;--green:#3B6D11;--green-bg:#EAF3DE;--green-txt:#27500A;--red:#A32D2D;--red-bg:#FCEBEB;--r:8px;--rl:12px}
+    @media(prefers-color-scheme:dark){:root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--txt:#f0efe9;--txt2:#a09f9a;--border:rgba(255,255,255,.10);--border2:rgba(255,255,255,.18);--blue:#378ADD;--blue-bg:#042C53;--blue-txt:#B5D4F4;--green:#97C459;--green-bg:#173404;--green-txt:#C0DD97;--red:#E24B4A;--red-bg:#501313}}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg3);color:var(--txt);min-height:100vh;padding:2rem 1rem}
+    .wrap{max-width:600px;margin:0 auto}
+    .logo-block{text-align:center;margin-bottom:1.5rem}
+    .logo-icon{width:64px;height:64px;background:var(--blue);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 8px 24px rgba(24,95,165,.2)}
+    .logo-icon i{font-size:30px;color:#fff}
+    .logo-block h1{font-size:26px;font-weight:700;letter-spacing:-.5px}
+    .logo-block p{color:var(--txt2);font-size:14px;margin-top:4px}
+    .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:2rem}
+    .section{font-size:11px;font-weight:700;color:var(--blue-txt);background:var(--blue-bg);padding:6px 10px;border-radius:var(--r);margin:16px 0 12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.8px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:500px){.grid{grid-template-columns:1fr}}
+    .span2{grid-column:span 2}
+    @media(max-width:500px){.span2{grid-column:span 1}}
+    .row{display:flex;flex-direction:column;gap:5px}
+    .row label{font-size:12px;color:var(--txt2);font-weight:500}
+    .req{color:var(--red)}
+    input,select{padding:9px 11px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--bg);color:var(--txt);font-size:13px;width:100%;transition:border-color .15s,box-shadow .15s}
+    input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.12)}
+    .addr-wrap{position:relative}
+    .addr-wrap .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--txt3);font-size:16px;pointer-events:none}
+    .addr-wrap input{padding-left:32px}
+    .gender-btns{display:flex;gap:8px}
+    .gbtn{flex:1;padding:9px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt);font-size:13px;cursor:pointer;text-align:center;transition:all .15s}
+    .gbtn.active{background:var(--blue-bg);color:var(--blue-txt);border-color:var(--blue);font-weight:500}
+    .age-badge{background:var(--blue-bg);color:var(--blue-txt);padding:4px 10px;border-radius:99px;font-size:12px;font-weight:500;display:none;width:fit-content;margin-top:4px}
+    .child-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;padding:10px;background:var(--bg2);border-radius:var(--r);margin-bottom:8px}
+    .child-row .row{margin:0}
+    .child-row label{font-size:11px}
+    .btn-add{padding:7px 14px;border-radius:var(--r);border:0.5px solid var(--blue);background:var(--blue-bg);color:var(--blue-txt);cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px;font-weight:500;margin-top:4px}
+    .btn-remove{padding:8px 10px;border-radius:var(--r);border:none;background:var(--red-bg);color:var(--red);cursor:pointer;font-size:13px}
+    .btn-submit{width:100%;padding:13px;border-radius:var(--r);background:var(--blue);color:#fff;border:none;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;transition:background .15s}
+    .btn-submit:hover{background:var(--blue-txt)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed}
+    .err{color:var(--red);font-size:12px;margin-top:3px;display:none}
+    .success{display:none;text-align:center;padding:2.5rem 1rem}
+    .success i{font-size:56px;color:var(--green)}
+    .success h2{font-size:20px;font-weight:700;margin:12px 0 8px}
+    .success p{color:var(--txt2);font-size:14px}
+    .hint{font-size:11px;color:var(--txt3);margin-top:3px}
+    .privacy{font-size:11px;color:var(--txt3);text-align:center;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:5px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo-block">
+    <div class="logo-icon"><i class="ti ti-users-group"></i></div>
+    <h1>Tootoo</h1>
+    <p>Community Registration Form</p>
+  </div>
+  <div class="card">
+
+    <div id="form-section">
+      <p style="font-size:11px;color:var(--txt2);margin-bottom:8px">Fields marked <span class="req">*</span> are required</p>
+
+      <div class="section"><i class="ti ti-user"></i> Personal Details</div>
+      <div class="grid">
+        <div class="row">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" id="f-first" placeholder="John" autocomplete="given-name" />
+          <span class="err" id="e-first">Required</span>
+        </div>
+        <div class="row">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" id="f-last" placeholder="Smith" autocomplete="family-name" />
+          <span class="err" id="e-last">Required</span>
+        </div>
+        <div class="row">
+          <label>Gender</label>
+          <div class="gender-btns">
+            <div class="gbtn" id="btn-m" onclick="setGender('Male')">♂ Male</div>
+            <div class="gbtn" id="btn-f" onclick="setGender('Female')">♀ Female</div>
+          </div>
+          <input type="hidden" id="f-gender" />
+        </div>
+        <div class="row">
+          <label>Marital Status</label>
+          <select id="f-status">
+            <option value="">Select...</option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Widowed">Widowed</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Religion</label>
+          <select id="f-religion">
+            <option value="">Select...</option>
+            <option value="Jewish">Jewish</option>
+            <option value="Non-Jewish">Non-Jewish</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Date of Birth</label>
+          <input type="date" id="f-birthdate" max="2025-12-31" oninput="showAge()" />
+          <div class="age-badge" id="age-badge"></div>
+        </div>
+      </div>
+
+      <div class="section"><i class="ti ti-users"></i> Children</div>
+      <div class="grid">
+        <div class="span2">
+          <label style="font-size:12px;color:var(--txt2);font-weight:500;display:block;margin-bottom:6px">Do you have children?</label>
+          <div class="gender-btns" style="max-width:200px">
+            <div class="gbtn" id="btn-cy" onclick="toggleKids('yes')">✓ Yes</div>
+            <div class="gbtn" id="btn-cn" onclick="toggleKids('no')">✗ No</div>
+          </div>
+        </div>
+        <div id="kids-section" class="span2" style="display:none">
+          <div id="kids-list"></div>
+          <button type="button" class="btn-add" onclick="addKid()"><i class="ti ti-plus"></i> Add Child</button>
+        </div>
+      </div>
+
+      <div class="section"><i class="ti ti-mail"></i> Contact Details</div>
+      <div class="grid">
+        <div class="row span2">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="f-email" placeholder="john@example.com" autocomplete="email" />
+          <span class="err" id="e-email">Invalid email</span>
+        </div>
+        <div class="row">
+          <label>Visa / Immigration Status</label>
+          <select id="f-visa">
+            <option value="">Select...</option>
+            <option value="Citizen">Citizen</option>
+            <option value="Permanent Resident">Permanent Resident</option>
+            <option value="Tourist Visa">Tourist Visa</option>
+            <option value="Work Visa">Work Visa</option>
+            <option value="Student Visa">Student Visa</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section"><i class="ti ti-map-pin"></i> Address (Australia)</div>
+      <div class="grid">
+        <div class="row span2">
+          <label>Full Street Address</label>
+          <div class="addr-wrap">
+            <i class="ti ti-map-pin ic"></i>
+            <input type="text" id="f-address" placeholder="Start typing your address..." autocomplete="off" />
+          </div>
+          <span class="hint"><i class="ti ti-info-circle" style="font-size:11px"></i> Type and select from suggestions — suburb, state & postcode will auto-fill</span>
+        </div>
+        <div class="row span2">
+          <label>Suburb / City</label>
+          <input type="text" id="f-city" placeholder="e.g. Bondi, Carlton..." />
+        </div>
+        <div class="row">
+          <label>State</label>
+          <select id="f-state">
+            <option value="">Select state...</option>
+            <option value="NSW">NSW — New South Wales</option>
+            <option value="VIC">VIC — Victoria</option>
+            <option value="QLD">QLD — Queensland</option>
+            <option value="WA">WA — Western Australia</option>
+            <option value="SA">SA — South Australia</option>
+            <option value="TAS">TAS — Tasmania</option>
+            <option value="ACT">ACT — Capital Territory</option>
+            <option value="NT">NT — Northern Territory</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Postcode</label>
+          <input type="text" id="f-postcode" placeholder="e.g. 2000" maxlength="4" />
+        </div>
+      </div>
+
+      <div id="form-error" style="color:var(--red);font-size:13px;margin-top:8px;display:none"></div>
+      <button class="btn-submit" id="submit-btn" onclick="submitForm()">
+        <i class="ti ti-send"></i> Submit Registration
+      </button>
+      <p class="privacy"><i class="ti ti-lock" style="font-size:13px"></i> Your information is secure and will not be shared.</p>
+    </div>
+
+    <div class="success" id="success-screen">
+      <i class="ti ti-circle-check"></i>
+      <h2>Thank you! Registration Received</h2>
+      <p>Your details have been saved successfully.<br>A representative will be in touch soon.</p>
+      <button onclick="resetForm()" style="margin-top:20px;padding:9px 20px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--txt);cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px">
+        <i class="ti ti-plus"></i> Submit Another
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let selGender = '';
+let kidsOn = null;
+let kidCount = 0;
+
+function setGender(g) {
+  selGender = g;
+  document.getElementById('f-gender').value = g;
+  document.getElementById('btn-m').classList.toggle('active', g==='Male');
+  document.getElementById('btn-f').classList.toggle('active', g==='Female');
+}
+
+function calcAge(d) {
+  if (!d) return 0;
+  const t = new Date(), b = new Date(d);
+  let a = t.getFullYear() - b.getFullYear();
+  const m = t.getMonth() - b.getMonth();
+  if (m < 0 || (m===0 && t.getDate()<b.getDate())) a--;
+  return a < 0 ? 0 : a;
+}
+
+function showAge() {
+  const d = document.getElementById('f-birthdate').value;
+  const badge = document.getElementById('age-badge');
+  if (d) { badge.textContent = calcAge(d) + ' years old'; badge.style.display = 'block'; }
+  else badge.style.display = 'none';
+}
+
+function toggleKids(val) {
+  kidsOn = val;
+  document.getElementById('btn-cy').classList.toggle('active', val==='yes');
+  document.getElementById('btn-cn').classList.toggle('active', val==='no');
+  const sec = document.getElementById('kids-section');
+  if (val === 'yes') { sec.style.display = 'block'; if (kidCount === 0) addKid(); }
+  else { sec.style.display = 'none'; document.getElementById('kids-list').innerHTML = ''; kidCount = 0; }
+}
+
+function addKid() {
+  kidCount++;
+  const id = kidCount;
+  const div = document.createElement('div');
+  div.className = 'child-row'; div.id = 'kid-' + id;
+  div.innerHTML = `
+    <div class="row"><label>Child ${id} — Full Name</label><input id="kn-${id}" placeholder="First & Last Name" /></div>
+    <div class="row"><label>Date of Birth</label><input type="date" id="kd-${id}" oninput="showKidAge(${id})" /><div class="age-badge" id="ka-${id}"></div></div>
+    <button type="button" class="btn-remove" onclick="document.getElementById('kid-${id}').remove()"><i class="ti ti-x"></i></button>`;
+  document.getElementById('kids-list').appendChild(div);
+}
+
+function showKidAge(id) {
+  const d = document.getElementById('kd-'+id)?.value;
+  const b = document.getElementById('ka-'+id);
+  if (d && b) { b.textContent = calcAge(d) + ' years old'; b.style.display = 'block'; }
+}
+
+function getKids() {
+  if (kidsOn !== 'yes') return [];
+  const kids = [];
+  document.querySelectorAll('[id^="kid-"]').forEach(row => {
+    const id = row.id.replace('kid-','');
+    const name = document.getElementById('kn-'+id)?.value.trim();
+    const dob  = document.getElementById('kd-'+id)?.value || '';
+    if (name) kids.push({ name, birthdate: dob, age: calcAge(dob) });
+  });
+  return kids;
+}
+
+function validate() {
+  let ok = true;
+  const first = document.getElementById('f-first').value.trim();
+  const last  = document.getElementById('f-last').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const re    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  document.getElementById('e-first').style.display = first ? 'none' : 'block';
+  document.getElementById('e-last').style.display  = last  ? 'none' : 'block';
+  document.getElementById('e-email').style.display = re.test(email) ? 'none' : 'block';
+  if (!first || !last || !re.test(email)) ok = false;
+  return ok;
+}
+
+async function submitForm() {
+  if (!validate()) return;
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Submitting...';
+  const bd = document.getElementById('f-birthdate').value;
+  const kids = getKids();
+  const entry = {
+    source: 'public-form',
+    firstName:  document.getElementById('f-first').value.trim(),
+    lastName:   document.getElementById('f-last').value.trim(),
+    gender:     document.getElementById('f-gender').value,
+    status:     document.getElementById('f-status').value,
+    religion:   document.getElementById('f-religion').value,
+    email:      document.getElementById('f-email').value.trim(),
+    visa:       document.getElementById('f-visa').value,
+    birthdate:  bd, age: calcAge(bd),
+    address:    document.getElementById('f-address').value.trim(),
+    city:       document.getElementById('f-city').value.trim(),
+    state:      document.getElementById('f-state').value,
+    postcode:   document.getElementById('f-postcode').value.trim(),
+    hasChildren: kidsOn === 'yes',
+    children:   kids,
+  };
+  try {
+    await fetch('/api/contacts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer public' },
+      body: JSON.stringify(entry),
+    });
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  } catch(e) {
+    document.getElementById('form-error').textContent = 'Submission failed. Please try again.';
+    document.getElementById('form-error').style.display = 'block';
+    btn.disabled = false; btn.innerHTML = '<i class="ti ti-send"></i> Submit Registration';
+  }
+}
+
+function resetForm() {
+  ['f-first','f-last','f-email','f-address','f-city','f-postcode','f-birthdate'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-gender','f-status','f-religion','f-visa','f-state'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  selGender=''; kidsOn=null; kidCount=0;
+  ['btn-m','btn-f','btn-cy','btn-cn'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+  document.getElementById('age-badge').style.display='none';
+  document.getElementById('kids-section').style.display='none';
+  document.getElementById('kids-list').innerHTML='';
+  document.getElementById('form-error').style.display='none';
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=false; btn.innerHTML='<i class="ti ti-send"></i> Submit Registration';
+  document.getElementById('form-section').style.display='block';
+  document.getElementById('success-screen').style.display='none';
+}
+
+function initAutocomplete() {
+  const input = document.getElementById('f-address');
+  if (!input || !window.google) return;
+  const ac = new google.maps.places.Autocomplete(input, {
+    componentRestrictions: { country: 'au' },
+    fields: ['address_components'],
+    types: ['address'],
+  });
+  ac.addListener('place_changed', () => {
+    const place = ac.getPlace(); if (!place.address_components) return;
+    let num='', street='', suburb='', state='', postcode='';
+    place.address_components.forEach(c => {
+      if (c.types.includes('street_number'))               num=c.long_name;
+      if (c.types.includes('route'))                       street=c.long_name;
+      if (c.types.includes('locality'))                    suburb=c.long_name;
+      if (c.types.includes('administrative_area_level_1')) state=c.short_name;
+      if (c.types.includes('postal_code'))                 postcode=c.long_name;
+    });
+    document.getElementById('f-address').value=(num?num+' ':'')+street;
+    if(suburb)   document.getElementById('f-city').value=suburb;
+    if(state)    document.getElementById('f-state').value=state;
+    if(postcode) document.getElementById('f-postcode').value=postcode;
+  });
+}
+</script>
+<!-- Replace YOUR_GOOGLE_MAPS_API_KEY below -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+</body>
+</html>
